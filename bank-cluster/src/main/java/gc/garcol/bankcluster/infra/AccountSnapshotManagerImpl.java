@@ -1,6 +1,7 @@
 package gc.garcol.bankcluster.infra;
 
 import gc.garcol.bankcluster.domain.account.Accounts;
+import gc.garcol.bankcluster.domain.portfolio.Portfolios;
 import gc.garcol.protocol.*;
 import io.aeron.ExclusivePublication;
 import io.aeron.Image;
@@ -25,6 +26,7 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
     private static final int RETRY_COUNT = 3;
 
     private final Accounts accounts;
+    private final Portfolios portoflios;
 
     @Setter
     private IdleStrategy idleStrategy;
@@ -39,7 +41,9 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
 
         switch (headerDecoder.templateId()) {
             case AccountIdSnapshotDecoder.TEMPLATE_ID -> onAccountIdGeneratorSnapshot(buffer, offset, length);
+            case PortfolioIdSnapshotDecoder.TEMPLATE_ID -> onPortfolioIdGeneratorSnapshot(buffer, offset, length);
             case AccountSnapshotDecoder.TEMPLATE_ID -> onAccountSnapshot(buffer, offset, length);
+            case PortfolioSnapshotDecoder.TEMPLATE_ID -> onPortfolioSnapshot(buffer, offset, length);
             case EndOfSnapshotDecoder.TEMPLATE_ID -> onEndOfSnapshot(buffer, offset, length);
             default -> LOGGER.warn("Unknown template id: {}", headerDecoder.templateId());
         }
@@ -49,7 +53,9 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
     public void takeSnapshot(ExclusivePublication snapshotPublication) {
         LOGGER.info("Starting snapshot...");
         offerAccounts(snapshotPublication);
+        offerPortfolios(snapshotPublication);
         offerAccountIdGenerator(snapshotPublication);
+        offerPortfolioIdGenerator(snapshotPublication);
         offerEndOfSnapshotMarker(snapshotPublication);
         LOGGER.info("Snapshot complete");
     }
@@ -89,6 +95,19 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
         });
     }
 
+    private void offerPortfolios(final ExclusivePublication snapshotPublication) {
+        portoflios.getPortfolios().forEach((id, portfolio) -> {
+            portfolioSnapshotEncoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+            portfolioSnapshotEncoder.id(id);
+            portfolioSnapshotEncoder.active(portfolio.isActive() ? BooleanType.TRUE : BooleanType.FALSE);
+            retryingOffer(
+                    snapshotPublication,
+                    buffer,
+                    headerEncoder.encodedLength() + portfolioSnapshotEncoder.encodedLength()
+            );
+        });
+    }
+
     /**
      * Offers the auction id generator's last id to the snapshot publication using the AuctionIdSnapshotEncoder
      *
@@ -101,6 +120,16 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
             snapshotPublication,
             buffer,
             headerEncoder.encodedLength() + accountIdSnapshotEncoder.encodedLength()
+        );
+    }
+
+    private void offerPortfolioIdGenerator(final ExclusivePublication snapshotPublication) {
+        portfolioIdSnapshotEncoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        portfolioIdSnapshotEncoder.lastId(portoflios.getIdGenerator().get());
+        retryingOffer(
+                snapshotPublication,
+                buffer,
+                headerEncoder.encodedLength() + portfolioIdSnapshotEncoder.encodedLength()
         );
     }
 
@@ -147,10 +176,25 @@ public class AccountSnapshotManagerImpl extends AccountSnapshotManagerAbstract {
     }
 
     @Override
+    public void onPortfolioSnapshot(final DirectBuffer buffer, final int offset, final int length) {
+        portfolioSnapshotDecoder.wrapAndApplyHeader(buffer, offset, headerDecoder);
+        final long id = portfolioSnapshotDecoder.id();
+        final boolean active = portfolioSnapshotDecoder.active() == BooleanType.TRUE;
+        portoflios.restorePortfolio(id, active);
+    }
+
+    @Override
     public void onAccountIdGeneratorSnapshot(final DirectBuffer buffer, final int offset, final int length) {
         accountIdSnapshotDecoder.wrapAndApplyHeader(buffer, offset, headerDecoder);
         final long lastId = accountIdSnapshotDecoder.lastId();
         accounts.restoreAutoIdGenerator(lastId);
+    }
+
+    @Override
+    public void onPortfolioIdGeneratorSnapshot(final DirectBuffer buffer, final int offset, final int length) {
+        portfolioIdSnapshotDecoder.wrapAndApplyHeader(buffer, offset, headerDecoder);
+        final long lastId = portfolioIdSnapshotDecoder.lastId();
+        portoflios.restoreAutoIdGenerator(lastId);
     }
 
     @Override

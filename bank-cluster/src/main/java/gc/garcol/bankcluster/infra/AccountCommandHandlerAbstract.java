@@ -11,5 +11,6 @@ public abstract class AccountCommandHandlerAbstract implements AccountCommandHan
     protected final WithdrawAccountCommandDecoder withdrawAccountCommandDecoder = new WithdrawAccountCommandDecoder();
     protected final DepositAccountCommandDecoder depositAccountCommandDecoder = new DepositAccountCommandDecoder();
     protected final CreateAccountCommandDecoder createAccountCommandDecoder = new CreateAccountCommandDecoder();
+    protected final CreatePortfolioCommandDecoder createPortfolioCommandDecoder = new CreatePortfolioCommandDecoder();
     protected final TransferAccountCommandDecoder transferAccountCommandDecoder = new TransferAccountCommandDecoder();
 }

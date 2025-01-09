@@ -28,12 +28,14 @@ public abstract class AccountCommandHandlerAbstract extends SystemCommandHandler
 
     // messages from commandBuffer, sent by client
     protected final CreateAccountCommandBufferDecoder createAccountCommandBufferDecoder = new CreateAccountCommandBufferDecoder();
+    protected final CreatePortfolioCommandBufferDecoder createPortfolioCommandBufferDecoder = new CreatePortfolioCommandBufferDecoder();
     protected final DepositAccountCommandBufferDecoder depositAccountCommandBufferDecoder = new DepositAccountCommandBufferDecoder();
     protected final WithdrawAccountCommandBufferDecoder withdrawAccountCommandBufferDecoder = new WithdrawAccountCommandBufferDecoder();
     protected final TransferAccountCommandBufferDecoder transferAccountCommandBufferDecoder = new TransferAccountCommandBufferDecoder();
 
     // messages would be sent to cluster
     protected final CreateAccountCommandEncoder createAccountCommandEncoder = new CreateAccountCommandEncoder();
+    protected final CreatePortfolioCommandEncoder createPortfolioCommandEncoder = new CreatePortfolioCommandEncoder();
     protected final DepositAccountCommandEncoder depositAccountCommandEncoder = new DepositAccountCommandEncoder();
     protected final WithdrawAccountCommandEncoder withdrawAccountCommandEncoder = new WithdrawAccountCommandEncoder();
     protected final TransferAccountCommandEncoder transferAccountCommandEncoder = new TransferAccountCommandEncoder();

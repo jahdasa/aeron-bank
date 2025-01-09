@@ -35,6 +35,19 @@ public class AccountClusterClientResponderAdapter extends AccountClusterClientRe
     }
 
     @Override
+    public void onPortfolioAdded(String correlationId, long portfolioId, AccountResponseCode result) {
+        createPortfolioResultEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder)
+                .correlationId(correlationId)
+                .portfolioId(portfolioId)
+                .result(CommandResult.SUCCESS);
+        context.reply(
+                buffer,
+                0,
+                MessageHeaderEncoder.ENCODED_LENGTH + createPortfolioResultEncoder.encodedLength()
+        );
+    }
+
+    @Override
     public void rejectCreateAccount(String correlationId, AccountResponseCode result) {
         createAccountResultEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder)
             .correlationId(correlationId)
@@ -43,6 +56,18 @@ public class AccountClusterClientResponderAdapter extends AccountClusterClientRe
             buffer,
             0,
             MessageHeaderEncoder.ENCODED_LENGTH + createAccountResultEncoder.encodedLength()
+        );
+    }
+
+    @Override
+    public void rejectCreatePortfolio(String correlationId, AccountResponseCode result) {
+        createPortfolioResultEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder)
+                .correlationId(correlationId)
+                .result(CommandResult.FAIL);
+        context.reply(
+                buffer,
+                0,
+                MessageHeaderEncoder.ENCODED_LENGTH + createPortfolioResultEncoder.encodedLength()
         );
     }
 

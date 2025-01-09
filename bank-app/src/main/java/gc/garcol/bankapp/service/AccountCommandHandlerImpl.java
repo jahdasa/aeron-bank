@@ -16,6 +16,7 @@ public class AccountCommandHandlerImpl
         handlers.put(ConnectClusterDecoder.TEMPLATE_ID, this::processConnectCluster);
         handlers.put(DisconnectClusterDecoder.TEMPLATE_ID, this::processDisconnectCluster);
         handlers.put(CreateAccountCommandBufferDecoder.TEMPLATE_ID, wrapClusterConnection(this::sendToClusterCreateAccountCommand));
+        handlers.put(CreatePortfolioCommandBufferDecoder.TEMPLATE_ID, wrapClusterConnection(this::sendToClusterCreatePortfolioCommand));
         handlers.put(DepositAccountCommandBufferDecoder.TEMPLATE_ID, wrapClusterConnection(this::sendToClusterDepositAccountCommand));
         handlers.put(WithdrawAccountCommandBufferDecoder.TEMPLATE_ID, wrapClusterConnection(this::sendToClusterWithdrawAccountCommand));
         handlers.put(TransferAccountCommandBufferDecoder.TEMPLATE_ID, wrapClusterConnection(this::sendToClusterTransferBalanceCommand));
@@ -30,6 +31,17 @@ public class AccountCommandHandlerImpl
         createAccountCommandEncoder.correlationId(createAccountCommandBufferDecoder.correlationId());
         publishCommandToCluster(
             sendBuffer, 0, MessageHeaderEncoder.ENCODED_LENGTH + createAccountCommandEncoder.encodedLength());
+    }
+
+    @Override
+    public void sendToClusterCreatePortfolioCommand(MutableDirectBuffer buffer, int offset) {
+        createPortfolioCommandBufferDecoder.wrapAndApplyHeader(buffer, offset, messageHeaderDecoder);
+        log.debug("offer CreatePortfolioCommand, (correlationId: {})", createPortfolioCommandBufferDecoder.correlationId());
+
+        createPortfolioCommandEncoder.wrapAndApplyHeader(sendBuffer, 0, messageHeaderEncoder);
+        createPortfolioCommandEncoder.correlationId(createPortfolioCommandBufferDecoder.correlationId());
+        publishCommandToCluster(
+                sendBuffer, 0, MessageHeaderEncoder.ENCODED_LENGTH + createPortfolioCommandEncoder.encodedLength());
     }
 
     @Override

@@ -12,6 +12,7 @@ public abstract class AccountClusterClientResponderAbstract implements AccountCl
     protected final MessageHeaderEncoder messageHeaderEncoder = new MessageHeaderEncoder();
     protected final ExpandableDirectByteBuffer buffer = new ExpandableDirectByteBuffer(1024);
     protected final CreateAccountResultEncoder createAccountResultEncoder = new CreateAccountResultEncoder();
+    protected final CreatePortfolioResultEncoder createPortfolioResultEncoder = new CreatePortfolioResultEncoder();
     protected final DepositAccountResultEncoder depositAccountResultEncoder = new DepositAccountResultEncoder();
     protected final WithdrawAccountResultEncoder withdrawAccountResultEncoder = new WithdrawAccountResultEncoder();
     protected final TransferAccountResultEncoder transferAccountResultEncoder = new TransferAccountResultEncoder();

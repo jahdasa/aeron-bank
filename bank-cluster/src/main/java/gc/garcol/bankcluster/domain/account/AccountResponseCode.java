@@ -6,7 +6,9 @@ package gc.garcol.bankcluster.domain.account;
  */
 public enum AccountResponseCode {
     ADD_ACCOUNT_SUCCESS,
+    ADD_PORTFOLIO_SUCCESS,
     ACCOUNT_ALREADY_EXISTS,
+    PORTFOLIO_ALREADY_EXISTS,
     ACCOUNT_NOT_EXISTED,
     WITHDRAW_ACCOUNT_SUCCESS,
     BALANCE_NOT_ENOUGH,

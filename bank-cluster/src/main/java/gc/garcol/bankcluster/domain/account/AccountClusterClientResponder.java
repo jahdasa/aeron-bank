@@ -7,8 +7,10 @@ package gc.garcol.bankcluster.domain.account;
 public interface AccountClusterClientResponder {
 
     void onAccountAdded(String correlationId, long accountId, AccountResponseCode result);
+    void onPortfolioAdded(String correlationId, long accountId, AccountResponseCode result);
 
     void rejectCreateAccount(String correlationId, AccountResponseCode result);
+    void rejectCreatePortfolio(String correlationId, AccountResponseCode result);
 
     void onAccountWithdrawn(String correlationId, long accountId, long amount, long balance,
                             AccountResponseCode result);

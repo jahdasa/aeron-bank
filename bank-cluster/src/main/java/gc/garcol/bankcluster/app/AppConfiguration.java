@@ -2,6 +2,7 @@ package gc.garcol.bankcluster.app;
 
 import gc.garcol.bankcluster.domain.TimerManager;
 import gc.garcol.bankcluster.domain.account.Accounts;
+import gc.garcol.bankcluster.domain.portfolio.Portfolios;
 import gc.garcol.bankcluster.infra.AccountSnapshotManagerImpl;
 import gc.garcol.bankcluster.infra.AppClusteredService;
 import gc.garcol.bankcluster.infra.ClientSessionsImpl;
@@ -36,8 +37,8 @@ public class AppConfiguration {
     }
 
     @Bean
-    public SnapshotManager snapshotManager(final Accounts accounts) {
-        return new AccountSnapshotManagerImpl(accounts);
+    public SnapshotManager snapshotManager(final Accounts accounts, final Portfolios portfolios) {
+        return new AccountSnapshotManagerImpl(accounts, portfolios);
     }
 
     @Bean

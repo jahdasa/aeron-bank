@@ -70,9 +70,22 @@
         <field name="active" id="3" type="BooleanType"/>
     </sbe:message>
 
+    <sbe:message name="PortfolioSnapshot"
+                 id="603"
+                 description="Snapshot an Auction">
+        <field name="id" id="1" type="int64"/>
+        <field name="active" id="3" type="BooleanType"/>
+    </sbe:message>
+
     <sbe:message name="AccountIdSnapshot"
                  id="11"
                  description="Snapshot for the Account ID generator">
+        <field name="lastId" id="1" type="int64"/>
+    </sbe:message>
+
+    <sbe:message name="PortfolioIdSnapshot"
+                 id="604"
+                 description="Snapshot for the Portfolio ID generator">
         <field name="lastId" id="1" type="int64"/>
     </sbe:message>
 
@@ -96,6 +109,21 @@
         <field name="accountId" id="2" type="int64"/>
         <field name="balance" id="3" type="int64"/>
         <field name="result" id="4" type="CommandResult"/>
+    </sbe:message>
+
+    <!-- COMMAND-ADD PORTFOLIO-->
+    <sbe:message name="CreatePortfolioCommand"
+                 id="600"
+                 description="Add a new portfolio">
+        <field name="correlationId" id="1" type="uuidString"/>
+    </sbe:message>
+
+    <sbe:message name="CreatePortfolioResult"
+                 id="601"
+                 description="Result from an CreatePortfolio, sent to the creator">
+        <field name="correlationId" id="1" type="uuidString"/>
+        <field name="portfolioId" id="2" type="int64"/>
+        <field name="result" id="3" type="CommandResult"/>
     </sbe:message>
 
     <!-- COMMAND-DEPOSIT -->

@@ -4,12 +4,13 @@ import gc.garcol.bankapp.service.AccountClusterEgressListener;
 import gc.garcol.bankapp.service.AccountCommandDispatcher;
 import gc.garcol.bankapp.service.AccountCommandDispatcherImpl;
 import gc.garcol.bankapp.service.AccountCommandHandlerImpl;
+import gc.garcol.bankapp.service.portfolio.PortfolioCommandDispatcher;
+import gc.garcol.bankapp.service.portfolio.PortfolioCommandDispatcherImpl;
 import org.agrona.BufferUtil;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingMillisIdleStrategy;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
-import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,6 +37,16 @@ public class AccountDomainSetup {
         accountCommandDispatcher.setCommandBuffer(commandBuffer);
         return accountCommandDispatcher;
     }
+
+    @Bean
+    public PortfolioCommandDispatcher portfolioCommandDispatcher(ManyToOneRingBuffer commandBuffer)
+    {
+        var dispatcher = new PortfolioCommandDispatcherImpl();
+        dispatcher.setCommandBuffer(commandBuffer);
+
+        return dispatcher;
+    }
+
 
     @Bean
     public AccountCommandHandlerImpl accountCommandHandler(

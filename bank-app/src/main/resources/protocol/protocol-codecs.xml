@@ -56,6 +56,11 @@
                  description="Add a new account">
         <field name="correlationId" id="1" type="uuidString"/>
     </sbe:message>
+    <sbe:message name="CreatePortfolioCommandBuffer"
+                 id="200"
+                 description="Add a new portfolio">
+        <field name="correlationId" id="1" type="uuidString"/>
+    </sbe:message>
     <sbe:message name="DepositAccountCommandBuffer"
                  id="101"
                  description="Add a new account">

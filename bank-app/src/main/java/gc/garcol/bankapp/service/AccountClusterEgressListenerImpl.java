@@ -41,6 +41,28 @@ public class AccountClusterEgressListenerImpl extends AccountClusterEgressListen
     }
 
     @Override
+    public void processCreatePortfolio(DirectBuffer buffer, int offset) {
+        createPortfolioResultDecoder.wrapAndApplyHeader(buffer, offset, messageHeaderDecoder);
+        if (createPortfolioResultDecoder.result() == CommandResult.SUCCESS) {
+            var response = new CreateAccountResponse();
+            response.setCorrelationId(createPortfolioResultDecoder.correlationId());
+            response.setAccountId(createPortfolioResultDecoder.portfolioId());
+            log.debug("[processCreatePortfolio] On receive reply {}", response);
+            accountRequestReplyFuture.replySuccess(
+                    response.getCorrelationId(),
+                    response
+            );
+        } else {
+            log.debug("[processCreatePortfolio] {} - Create portfolio failed: {}",
+                    createPortfolioResultDecoder.correlationId(), createPortfolioResultDecoder.result());
+            accountRequestReplyFuture.replyFail(
+                    createPortfolioResultDecoder.correlationId(),
+                    new BaseError("Create portfolio failed - " + createPortfolioResultDecoder.result().name())
+            );
+        }
+    }
+
+    @Override
     public void processWithdrawAccount(DirectBuffer buffer, int offset) {
         withdrawAccountResultDecoder.wrapAndApplyHeader(buffer, offset, messageHeaderDecoder);
         if (withdrawAccountResultDecoder.result() == CommandResult.SUCCESS) {

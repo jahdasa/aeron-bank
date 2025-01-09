@@ -3,6 +3,7 @@ package gc.garcol.bankcluster.app;
 import gc.garcol.bankcluster.domain.TimerManager;
 import gc.garcol.bankcluster.domain.account.AccountClusterClientResponder;
 import gc.garcol.bankcluster.domain.account.Accounts;
+import gc.garcol.bankcluster.domain.portfolio.Portfolios;
 import gc.garcol.bankcluster.infra.adapter.domain.AccountClusterClientResponderAdapter;
 import gc.garcol.bankcluster.infra.adapter.domain.SessionMessageContextAdapter;
 import org.springframework.context.annotation.Bean;
@@ -22,5 +23,14 @@ public class AccountDomainSetup {
         final TimerManager timerManager
     ) {
         return new Accounts(context, accountClusterClientResponder, timerManager);
+    }
+
+    @Bean
+    public Portfolios portfolios(
+            final SessionMessageContextAdapter context,
+            final AccountClusterClientResponder accountClusterClientResponder,
+            final TimerManager timerManager
+    ) {
+        return new Portfolios(context, accountClusterClientResponder, timerManager);
     }
 }

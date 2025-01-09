@@ -10,6 +10,7 @@ import org.agrona.concurrent.MessageHandler;
  */
 public interface AccountCommandHandler extends Agent, MessageHandler {
     void sendToClusterCreateAccountCommand(final MutableDirectBuffer buffer, final int offset);
+    void sendToClusterCreatePortfolioCommand(final MutableDirectBuffer buffer, final int offset);
 
     void sendToClusterDepositAccountCommand(final MutableDirectBuffer buffer, final int offset);
 

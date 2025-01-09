@@ -12,6 +12,7 @@ public abstract class AccountClusterEgressListenerAbstract implements AccountClu
     protected final MessageHeaderDecoder messageHeaderDecoder = new MessageHeaderDecoder();
 
     protected final CreateAccountResultDecoder createAccountResultDecoder = new CreateAccountResultDecoder();
+    protected final CreatePortfolioResultDecoder createPortfolioResultDecoder = new CreatePortfolioResultDecoder();
     protected final DepositAccountResultDecoder depositAccountResultDecoder = new DepositAccountResultDecoder();
     protected final WithdrawAccountResultDecoder withdrawAccountResultDecoder = new WithdrawAccountResultDecoder();
     protected final TransferAccountResultDecoder transferAccountResultDecoder = new TransferAccountResultDecoder();
@@ -34,6 +35,7 @@ public abstract class AccountClusterEgressListenerAbstract implements AccountClu
         log.debug("[AccountEgress] onMessage: templateId={}", messageHeaderDecoder.templateId());
         switch (messageHeaderDecoder.templateId()) {
             case CreateAccountResultDecoder.TEMPLATE_ID -> processCreateAccount(buffer, offset);
+            case CreatePortfolioResultDecoder.TEMPLATE_ID -> processCreatePortfolio(buffer, offset);
             case WithdrawAccountResultDecoder.TEMPLATE_ID -> processWithdrawAccount(buffer, offset);
             case DepositAccountResultDecoder.TEMPLATE_ID -> processDepositAccount(buffer, offset);
             case TransferAccountResultDecoder.TEMPLATE_ID -> processTransferAccount(buffer, offset);
