@@ -2,7 +2,7 @@ version: '3.8'
 name: 'bank-infra'
 services:
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: docker.mofid.dev/jaegertracing/all-in-one:latest
     container_name: jaeger
     ports:
       - "16686:16686" # the jaeger UI
@@ -10,7 +10,7 @@ services:
     environment:
       - COLLECTOR_OTLP_ENABLED=true
   consul-server:
-    image: hashicorp/consul:latest
+    image: docker.mofid.dev/hashicorp/consul:latest
     container_name: consul-server
     restart: always
     volumes:

@@ -8,6 +8,7 @@ import org.agrona.BufferUtil;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingMillisIdleStrategy;
 import org.agrona.concurrent.UnsafeBuffer;
+import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +24,14 @@ public class AccountDomainSetup {
     }
 
     @Bean
-    public OneToOneRingBuffer commandBuffer() {
+    public ManyToOneRingBuffer commandBuffer() {
         final var adminClusterBuffer =
             new UnsafeBuffer(BufferUtil.allocateDirectAligned((1 << 15) + TRAILER_LENGTH, 8));
-        return new OneToOneRingBuffer(adminClusterBuffer);
+        return new ManyToOneRingBuffer(adminClusterBuffer);
     }
 
     @Bean
-    public AccountCommandDispatcher accountCommandDispatcher(OneToOneRingBuffer commandBuffer) {
+    public AccountCommandDispatcher accountCommandDispatcher(ManyToOneRingBuffer commandBuffer) {
         var accountCommandDispatcher = new AccountCommandDispatcherImpl();
         accountCommandDispatcher.setCommandBuffer(commandBuffer);
         return accountCommandDispatcher;
@@ -38,7 +39,7 @@ public class AccountDomainSetup {
 
     @Bean
     public AccountCommandHandlerImpl accountCommandHandler(
-        final OneToOneRingBuffer commandBuffer,
+        final ManyToOneRingBuffer commandBuffer,
         final AccountClusterEgressListener egressListener,
         final ClusterVariable clusterVariable
     ) {

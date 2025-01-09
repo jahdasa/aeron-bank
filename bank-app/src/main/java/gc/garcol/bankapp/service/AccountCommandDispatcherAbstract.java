@@ -3,6 +3,7 @@ package gc.garcol.bankapp.service;
 import gc.garcol.protocol.*;
 import lombok.Setter;
 import org.agrona.ExpandableArrayBuffer;
+import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
 
 /**
@@ -11,7 +12,7 @@ import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
  */
 public abstract class AccountCommandDispatcherAbstract implements AccountCommandDispatcher {
     @Setter
-    protected OneToOneRingBuffer commandBuffer;
+    protected ManyToOneRingBuffer commandBuffer;
 
     protected final ExpandableArrayBuffer buffer = new ExpandableArrayBuffer(1 << 10);
     protected final MessageHeaderEncoder messageHeaderEncoder = new MessageHeaderEncoder();

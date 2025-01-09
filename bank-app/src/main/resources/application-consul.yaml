@@ -1,7 +1,7 @@
 spring:
   cloud:
     consul:
-      host: localhost
+      host: 172.16.202.51
       port: 8500
       discovery:
         instance-id: ${spring.application.name}:${random.value}

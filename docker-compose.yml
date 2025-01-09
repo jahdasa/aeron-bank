@@ -1,6 +1,30 @@
 version: '3.8'
 name: 'aeron-bank'
 services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+    hostname: api-gateway
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.6
+    ports:
+      - "8080:8080"
+  bank-app:
+    build:
+      context: ./bank-app
+    hostname: bank-app
+    shm_size: '1gb'
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.5
+    ports:
+      - "8000:8000"
+    environment:
+      - CLUSTER_HOST=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
+      - CLUSTER_PORT=9000
+      - RESPONSE_HOST=172.16.202.5
+      - RESPONSE_PORT=0
   node0:
     build:
       context: ./bank-cluster
@@ -10,7 +34,7 @@ services:
       internal_bus:
         ipv4_address: 172.16.202.2
     environment:
-      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4
+      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
       - BASE_DIR=/home/aeron/jar/aeron-cluster
       - CLUSTER_NODE=0
       - CLUSTER_PORT_BASE=9000
@@ -23,7 +47,7 @@ services:
       internal_bus:
         ipv4_address: 172.16.202.3
     environment:
-      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4
+      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
       - CLUSTER_NODE=1
       - BASE_DIR=/home/aeron/jar/aeron-cluster
       - CLUSTER_PORT_BASE=9000
@@ -36,11 +60,63 @@ services:
       internal_bus:
         ipv4_address: 172.16.202.4
     environment:
-      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4
+      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
       - CLUSTER_NODE=2
       - BASE_DIR=/home/aeron/jar/aeron-cluster
       - CLUSTER_PORT_BASE=9000
 
+  node3:
+    build:
+      context: ./bank-cluster
+    hostname: cluster3
+    shm_size: '1gb'
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.13
+    environment:
+      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
+      - CLUSTER_NODE=3
+      - BASE_DIR=/home/aeron/jar/aeron-cluster
+      - CLUSTER_PORT_BASE=9000
+
+  node4:
+    build:
+      context: ./bank-cluster
+    hostname: cluster4
+    shm_size: '1gb'
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.14
+    environment:
+      - CLUSTER_ADDRESSES=172.16.202.2,172.16.202.3,172.16.202.4,172.16.202.13,172.16.202.14
+      - CLUSTER_NODE=4
+      - BASE_DIR=/home/aeron/jar/aeron-cluster
+      - CLUSTER_PORT_BASE=9000
+  jaeger:
+    image: docker.mofid.dev/jaegertracing/all-in-one:latest
+    container_name: jaeger
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.50
+    ports:
+      - "16686:16686" # the jaeger UI
+      - "4317:4317" # the OpenTelemetry collector grpc
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+  consul-server:
+    image: docker.mofid.dev/hashicorp/consul:latest
+    container_name: consul-server
+    restart: always
+    networks:
+      internal_bus:
+        ipv4_address: 172.16.202.51
+    volumes:
+      - ./infrastructure/consul/server.json:/consul/config/server.json:ro
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    command: "agent"
 networks:
   internal_bus:
     driver: bridge

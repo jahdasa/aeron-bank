@@ -6,7 +6,7 @@ management.tracing:
   sampling.probability: 1.0
 
 tracing:
-  url: http://localhost:4317
+  url: http://172.16.202.50:4317
 logging:
   pattern.correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   include-application-name: false

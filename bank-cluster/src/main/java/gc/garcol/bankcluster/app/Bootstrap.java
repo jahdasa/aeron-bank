@@ -3,8 +3,10 @@ package gc.garcol.bankcluster.app;
 import gc.garcol.bankcluster.infra.AppClusteredService;
 import gc.garcol.common.core.ClusterToolDispatcher;
 import gc.garcol.common.exception.BankException;
+import io.aeron.archive.ArchiveThreadingMode;
 import io.aeron.cluster.ClusteredMediaDriver;
 import io.aeron.cluster.service.ClusteredServiceContainer;
+import io.aeron.driver.ThreadingMode;
 import io.aeron.samples.cluster.ClusterConfig;
 import lombok.Setter;
 import org.agrona.concurrent.ShutdownSignalBarrier;
@@ -53,6 +55,9 @@ public class Bootstrap {
         final ClusterConfig clusterConfig = ClusterConfig.create(
             node, hostAddresses, hostAddresses, port, appClusteredService
         );
+        clusterConfig.mediaDriverContext().threadingMode(ThreadingMode.DEDICATED);
+        clusterConfig.archiveContext().threadingMode(ArchiveThreadingMode.DEDICATED);
+
         clusterConfig.consensusModuleContext().ingressChannel("aeron:udp");
         clusterConfig.baseDir(new File(baseDir));
 

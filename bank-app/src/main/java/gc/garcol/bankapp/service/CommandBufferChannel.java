@@ -1,5 +1,6 @@
 package gc.garcol.bankapp.service;
 
+import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
 
 /**
@@ -7,5 +8,5 @@ import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
  * @since 2024
  */
 public interface CommandBufferChannel {
-    void setCommandBuffer(OneToOneRingBuffer commandBuffer);
+    void setCommandBuffer(ManyToOneRingBuffer commandBuffer);
 }

@@ -31,7 +31,7 @@ public class SimpleAccountRequestReplyFuture {
             completableFuture.complete(timeout);
 
             endSpan(correlationId);
-        }, 10, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
         return completableFuture;
     }
 

@@ -1,4 +1,4 @@
-ARG REPO_NAME=docker.io/
+ARG REPO_NAME=docker.mofid.dev/docker.io/
 ARG IMAGE_NAME=azul/zulu-openjdk-debian
 ARG IMAGE_TAG=21
 FROM ${REPO_NAME}${IMAGE_NAME}:${IMAGE_TAG}
@@ -23,10 +23,10 @@ RUN apt-get remove wget --quiet --assume-yes
 RUN apt-get clean --quiet --assume-yes
 
 WORKDIR /home/aeron/jar/
-COPY --chown=aeron:aeron --chmod=755 /build/libs/bank-cluster.jar /home/aeron/jar/bank-cluster.jar
+COPY --chown=aeron:aeron --chmod=755 ./build/libs/bank-cluster.jar /home/aeron/jar/bank-cluster.jar
 COPY --chown=aeron:aeron --chmod=755 ./script/entrypoint.sh /home/aeron/jar/entrypoint.sh
 
 # Set the user to aeron
 USER aeron
 
-ENTRYPOINT ["/home/aeron/jar/entrypoint.sh"]
+CMD ["java", "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED", "-Djava.net.preferIPv4Stack=true", "-Daeron.ipc.mtu.length=8k", "-jar","/home/aeron/jar/bank-cluster.jar"]

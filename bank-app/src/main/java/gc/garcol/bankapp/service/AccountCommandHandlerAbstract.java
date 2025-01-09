@@ -8,6 +8,7 @@ import org.agrona.ExpandableDirectByteBuffer;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.collections.Int2ObjectHashMap;
 import org.agrona.concurrent.SystemEpochClock;
+import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.OneToOneRingBuffer;
 
 import static gc.garcol.bankapp.service.CommandBufferHandler.DEFAULT_NOT_FOUND_HANDLER;
@@ -19,7 +20,7 @@ public abstract class AccountCommandHandlerAbstract extends SystemCommandHandler
     private long lastHeartbeatTime = Long.MIN_VALUE;
 
     @Setter
-    protected OneToOneRingBuffer commandBuffer;
+    protected ManyToOneRingBuffer commandBuffer;
 
 
     protected final MutableDirectBuffer sendBuffer = new ExpandableDirectByteBuffer(1 << 10);
