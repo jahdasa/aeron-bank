@@ -18,6 +18,14 @@ public interface AccountClusterClientResponder {
     void rejectWithdrawAccount(String correlationId, long accountId, long amount,
                                AccountResponseCode result);
 
+    void rejectSetPortfolioIsin(
+        String correlationId,
+        long portfolioId,
+        String isin,
+        long quantity,
+        long blockedQuantity,
+        AccountResponseCode result);
+
     void onAccountDeposited(String correlationId, long accountId, long amount, long balance,
                             AccountResponseCode result);
 

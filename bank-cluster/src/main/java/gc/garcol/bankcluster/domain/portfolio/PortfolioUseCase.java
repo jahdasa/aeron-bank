@@ -6,4 +6,7 @@ package gc.garcol.bankcluster.domain.portfolio;
  */
 public interface PortfolioUseCase {
     void openPortfolio(String correlationId);
+
+    void set(String correlationId, String isin, long quantity);
+
 }

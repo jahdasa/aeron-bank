@@ -103,6 +103,21 @@ public class AccountClusterClientResponderAdapter extends AccountClusterClientRe
     }
 
     @Override
+    public void rejectSetPortfolioIsin(String correlationId, long portfolioId, String isin, long quantity, long blockQuantity,
+                                      AccountResponseCode result) {
+        withdrawAccountResultEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder)
+                .correlationId(correlationId)
+                .accountId(accountId)
+                .withdrawAmount(amount)
+                .result(CommandResult.FAIL);
+        context.reply(
+                buffer,
+                0,
+                MessageHeaderEncoder.ENCODED_LENGTH + withdrawAccountResultEncoder.encodedLength()
+        );
+    }
+
+    @Override
     public void onAccountDeposited(String correlationId, long accountId, long amount, long balance,
                                    AccountResponseCode result) {
         depositAccountResultEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder)
